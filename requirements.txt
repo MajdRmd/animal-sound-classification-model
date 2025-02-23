@@ -1,0 +1,11 @@
+Flask
+Flask-MySQL
+Flask-Login
+Flask-WTF
+Werkzeug
+flask_sqlalchemy
+flask_migrate
+flask_bcrypt
+pydub
+numpy
+tensorflow
