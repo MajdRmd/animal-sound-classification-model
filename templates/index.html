@@ -132,6 +132,7 @@
         {% if not current_user.is_authenticated %}
             <div class="overlay">Please log in to upload</div>
         {% endif %}
+
     </div>
 
    
@@ -162,10 +163,23 @@
             });
 
 
-        document.getElementById('file-upload').addEventListener('change', function(event) {
-            const fileName = event.target.files[0]?.name || "No file selected";
-            document.getElementById('selected-file').textContent = "Selected file: " + fileName;
-        });
+            document.getElementById('file-upload').addEventListener('change', function(event) {
+    const fileInput = event.target;
+    const fileName = fileInput.files[0]?.name || "No file selected";
+
+    // Hide the "No file selected" text and show the file name
+    const selectedFileText = document.getElementById('selected-file');
+    selectedFileText.textContent = "Selected file: " + fileName;
+
+    // If no file is selected, revert to default text
+    if (fileInput.files.length === 0) {
+        selectedFileText.textContent = "No file selected";
+    }
+});
+
+
+
+
     </script>
 
     <div class="recording-section">
@@ -173,7 +187,10 @@
         <p id="record-timer">Recording: 0s</p>
         <audio id="audio-playback" controls></audio>
     </div>
-
+    {% if prediction_result %}
+        <h3>Prediction Result:</h3>
+        <p>{{ prediction_result }}</p>
+    {% endif %}
     <script>
         let mediaRecorder;
         let audioChunks = [];
