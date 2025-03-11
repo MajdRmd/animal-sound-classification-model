@@ -54,7 +54,7 @@ def predict(filename):
     input_data = preprocess_audio(file_path)  # Ensure shape is (1, 128, 128, 1)
 
     # Load model (ensure the path is correct)
-    model = load_model('awid_model.h5')
+    model = load_model('awid_model_enhanced.h5')
 
     # Get predictions
     prediction = model.predict(input_data)
