@@ -1,0 +1,19 @@
+from pydub import AudioSegment
+
+def convert_to_wav(input_file_path, output_file_path):
+    """
+    Converts an audio file to WAV format.
+    
+    Args:
+        input_file_path (str): Path to the input audio file (e.g., mp3, flac, etc.).
+        output_file_path (str): Path to save the output WAV file.
+    """
+    # Load the input audio file
+    audio = AudioSegment.from_file(input_file_path)
+    
+    # Export it as a .wav file
+    audio.export(output_file_path, format='wav')
+    print(f"Audio successfully converted to: {output_file_path}")
+
+# Example usage:
+convert_to_wav("recorded_audio.wav", "output_audio.wav")
