@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/ffmpeg.js@4.4.0/ffmpeg.min.js"></script>
+
     <title>Animal Sound Classification</title>
     <style>
         body {
@@ -138,6 +140,30 @@
    
 
     <script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    const fileInput = document.getElementById("file-upload");
+    const selectedFileText = document.getElementById("selected-file");
+
+    if (!fileInput || !selectedFileText) {
+        console.error("Error: file input or selected file text not found!");
+        return;
+    }
+
+    fileInput.addEventListener("change", function () {
+        console.log("File input changed!");
+        console.log("Files selected:", fileInput.files);
+
+        if (fileInput.files.length > 0) {
+            selectedFileText.textContent = "Selected file: " + fileInput.files[0].name;
+            console.log("Updated text:", selectedFileText.textContent);
+        } else {
+            selectedFileText.textContent = "No file selected";
+            console.log("No file selected");
+        }
+    });
+});
+
         const isAuthenticated = {{ 'true' if current_user.is_authenticated else 'false' }};
        
 
@@ -162,7 +188,11 @@
                 }
             });
 
+            document.getElementById('file-upload').addEventListener('change', function(event) {
+    const fileInput = event.target;
+    const selectedFileText = document.getElementById('selected-file');
 
+<<<<<<< Updated upstream
             document.getElementById('file-upload').addEventListener('change', function(event) {
     const fileInput = event.target;
     const fileName = fileInput.files[0]?.name || "No file selected";
@@ -181,6 +211,15 @@
 
 
     </script>
+=======
+    if (fileInput.files.length > 0) {
+        selectedFileText.textContent = "Selected file: " + fileInput.files[0].name;
+    } else {
+        selectedFileText.textContent = "No file selected";
+    }
+});
+ </script>
+>>>>>>> Stashed changes
 
     <div class="recording-section">
         <button id="record-btn">Start Recording</button>
@@ -230,6 +269,8 @@
 
     // Create a file from the Blob and update the file input
     const recordedFile = new File([audioBlob], "recorded_audio.wav", { type: "audio/wav" });
+    console.log(audioBlob.type); // Check the MIME type to see what format it really is.
+
 
     const dataTransfer = new DataTransfer();
     dataTransfer.items.add(recordedFile);
@@ -267,7 +308,33 @@
             document.getElementById('record-btn').classList.remove("recording");
             clearInterval(recordingTimer);
         }
+        
     </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("JavaScript is running!");
+        const fileInput = document.getElementById("file-upload");
+        const selectedFileText = document.getElementById("selected-file");
+
+        if (!fileInput || !selectedFileText) {
+            console.error("Error: file input or selected file text not found!");
+            return;
+        }
+
+        fileInput.addEventListener("change", function () {
+            console.log("File input changed!");
+            console.log("Files selected:", fileInput.files);
+
+            if (fileInput.files.length > 0) {
+                selectedFileText.textContent = "Selected file: " + fileInput.files[0].name;
+                console.log("Updated text:", selectedFileText.textContent);
+            } else {
+                selectedFileText.textContent = "No file selected";
+                console.log("No file selected");
+            }
+        });
+    });
+</script>
 
 </body>
 </html>
