@@ -36,12 +36,7 @@
 <body>
     <h2>Upload Audio File</h2>
     
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, message in messages %}
-            <p style="color: {{ 'red' if category == 'danger' else 'green' }}">{{ message }}</p>
-        {% endfor %}
-    {% endwith %}
-    
+   
     <!-- Audio file upload form -->
     <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
         <input type="file" name="audio" accept="audio/*" required>

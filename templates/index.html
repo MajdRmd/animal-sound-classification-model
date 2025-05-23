@@ -1,339 +1,548 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/ffmpeg.js@4.4.0/ffmpeg.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Animal Sound Classification</title>
 
-    <title>Animal Sound Classification</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f0f0f0;
-            text-align: center;
-        }
-        #audio-playback {
-    margin: 10px auto;
-    display: none;
-    text-align: center;
-}
-.recording-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+  <!-- AOS CSS -->
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #eaf7f1;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Hero Section */
+    header.hero {
+      position: relative;
+      background-image: url('/static/hero.jpg');
+      background-size: cover;
+      background-position: center;
+      color: #fff;
+      text-align: center;
+      padding: 6rem 1rem 4rem;
+      overflow: hidden;
+    }
+    header.hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 0;
+    }
+    header.hero .container {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    header.hero h1 {
+      font-weight: 700;
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    }
+    header.hero p.lead {
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
+    header.hero a.btn-get-started {
+      font-weight: 600;
+      padding: 0.75rem 2rem;
+      font-size: 1.15rem;
+      border-radius: 50px;
+      box-shadow: 0 6px 12px rgba(25, 135, 84, 0.5);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    header.hero a.btn-get-started:hover {
+      background-color: #14532d;
+      box-shadow: 0 8px 20px rgba(20, 83, 45, 0.7);
+    }
+
+    /* Features Section */
+    section.features {
+      background-color: #e9f5ee;
+      padding: 5rem 1rem;
+      text-align: center;
+    }
+    section.features .bi {
+      font-size: 3.5rem;
+      color: #198754;
+      margin-bottom: 1rem;
+      transition: color 0.3s ease;
+    }
+    section.features .feature-box:hover .bi {
+      color: #14532d;
+    }
+    section.features h5 {
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: #14532d;
+    }
+    section.features p {
+      font-size: 1rem;
+      color: #3b554b;
+      max-width: 280px;
+      margin: 0 auto;
+    }
+
+    /* Upload Section */
+    #upload-section {
+      flex-grow: 1;
+      padding: 3rem 1rem 4rem;
+    }
+    .upload-card {
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      padding: 2.5rem 2rem;
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+      border: 2px dashed #ced4da;
+      transition: border-color 0.3s ease;
+    }
+    .upload-card:hover {
+      border-color: #198754;
+      box-shadow: 0 6px 25px rgba(25, 135, 84, 0.3);
+    }
+    .disabled-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #6c757d;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .upload-card p.lead {
+      font-weight: 600;
+      font-size: 1.15rem;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+    #file-upload {
+      border-radius: 8px;
+      border: 1.5px solid #ced4da;
+      padding: 0.45rem 0.75rem;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+      cursor: pointer;
+    }
+    #file-upload:hover {
+      border-color: #198754;
+    }
+    #selected-file {
+      margin-top: 0.5rem;
+      font-style: italic;
+      color: #6c757d;
+      min-height: 1.4rem;
+    }
+    .upload-btn {
+      margin-top: 1.8rem;
+      font-weight: 600;
+      border-radius: 50px;
+      padding: 0.7rem;
+      font-size: 1.1rem;
+      box-shadow: 0 6px 14px rgba(25, 135, 84, 0.4);
+      transition: background-color 0.3s ease;
+    }
+    .upload-btn:hover {
+      background-color: #14532d;
+      box-shadow: 0 8px 20px rgba(20, 83, 45, 0.7);
+    }
+    .text-secondary {
+      font-size: 0.9rem;
+      margin-top: 0.75rem;
+    }
+
+    /* Recording Section */
+    .recording-section {
+      margin-top: 3rem;
+      text-align: center;
+    }
+    #record-btn {
+      background-color: #dc3545;
+      color: white;
+      font-weight: 700;
+      border-radius: 50px;
+      padding: 0.6rem 1.8rem;
+      font-size: 1.1rem;
+      box-shadow: 0 6px 12px rgba(220, 53, 69, 0.5);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    #record-btn:hover {
+      background-color: #a71d2a;
+      box-shadow: 0 8px 20px rgba(167, 29, 42, 0.7);
+    }
+    #record-btn.recording {
+      background-color: #7a121c !important;
+      box-shadow: 0 8px 22px rgba(122, 18, 28, 0.9) !important;
+    }
+    #record-timer {
+      margin-top: 0.8rem;
+      font-weight: 600;
+      color: #dc3545;
+    }
+   audio#audio-playback {
+  margin-top: 1rem;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 8px;
+  outline: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-        h1 {
-            color: #4CAF50;
-        }
-        a {
-            margin-right: 15px;
-            text-decoration: none;
-            color: #4CAF50;
-            font-weight: bold;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        .upload-box {
-            border: 2px dashed #ccc;
-            border-radius: 10px;
-            padding: 40px;
-            background: #fff;
-            width: 50%;
-            margin: 20px auto;
-            text-align: center;
-            position: relative;
-        }
-        .upload-box:hover {
-            border-color: #4CAF50;
-        }
-        .file-input {
-            display: none;
-        }
-        .upload-btn {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .upload-btn:hover {
-            background-color: #45a049;
-        }
-        .disabled {
-            background-color: #ccc !important;
-            cursor: not-allowed !important;
-        }
-        #selected-file {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #333;
-        }
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: bold;
-            color: #555;
-            border-radius: 10px;
-        }
-        .recording-section {
-            margin-top: 20px;
-        }
-        #record-btn {
-            background-color: red;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        #record-btn.recording {
-            background-color: darkred;
-        }
-        #audio-playback {
-            margin-top: 10px;
-            display: none;
-        }
-    </style>
+
+    /* Prediction Result */
+    .alert-info {
+      max-width: 600px;
+      margin: 3rem auto 0;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #0c5460;
+      background-color: #d1ecf1;
+      border-color: #bee5eb;
+      border-radius: 12px;
+      box-shadow: 0 4px 18px rgba(13, 110, 253, 0.15);
+    }
+
+    /* Footer */
+    footer.bg-dark {
+      padding: 1.5rem 1rem;
+      font-size: 0.95rem;
+      margin-top: auto;
+    }
+    footer a {
+      text-decoration: underline;
+    }
+    footer a:hover {
+      color: #198754 !important;
+    }
+    .hero-section {
+  min-height: 100vh;
+  background: #eaf7f1;
+  padding-top: 60px;
+  padding-bottom: 30px;
+}
+
+.hero-section h1 {
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.hero-img {
+  text-align: center;
+}
+.hero-img img {
+  max-width: 100%;
+  background-color: #eaf7f1;
+  height: auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-height: 400px; /* or adjust to whatever max height you want */
+  object-fit: contain;
+}
+.section-divider {
+  height: 2px;
+  background: linear-gradient(to right, transparent, #14532d, transparent);
+  margin: 1.5rem auto;
+  width: 80%;
+  border: none;
+  opacity: 0.6;
+}
+
+
+  </style>
 </head>
 <body>
 
-    <h1>Welcome to Animal Sound Classification</h1>
+  <div class="bg-dark text-white py-5 text-center">
+  <div class="container">
+
+    <h1 class="animate__animated animate__fadeInDown mb-3 text-white" style="font-weight: 600;">
+🐾 AI LISTENS TO NATURE: <br> ACOUSTIC WILDLIFE IDENTIFICATION </h1>
 
     {% if current_user.is_authenticated %}
-        <a href="{{ url_for('logout') }}">Logout</a>
+      <a href="{{ url_for('logout') }}" class="btn btn-outline-danger me-2">Logout</a>
     {% else %}
-        <a href="{{ url_for('login') }}">Login</a> |
-        <a href="{{ url_for('signup') }}">Sign Up</a>
+     <a href="{{ url_for('login') }}" class="btn btn-success me-2">Login</a>
+<a href="{{ url_for('signup') }}" class="btn btn-outline-success">Sign Up</a>
+
     {% endif %}
+  </div>
+  </div>
 
-    <div class="upload-box" id="drop-area">
-        <p>Drag and drop your audio file here</p>
-        <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
-            <label for="file-upload" class="upload-btn" id="upload-label">Select a file</label>
-            <input type="file" id="file-upload" name="audio" class="file-input" accept=".mp3,.wav,.ogg">
-            <p id="selected-file">No file selected</p> 
-            <button type="submit" class="upload-btn" id="upload-btn">Upload</button>
-        </form>
-        <p>Supported formats: MP3, WAV, OGG (Max size: 20MB)</p>
+  <section class="hero-section">
+    <div class="container">
+      <div class="row align-items-center">
+        <!-- Left Column -->
+        <div class="col-lg-6">
+          <h1 class="hero-title">🐾 AWID Sound Classifier</h1>
+          <p class="hero-subtitle">
+            Classify and identify animals based on their unique sounds using AI technology.
+          </p>
+          <div>
+            <a href="#upload-section" class="btn btn-success me-2">Get Started</a>
+          </div>
+        </div>
 
-        {% if not current_user.is_authenticated %}
-            <div class="overlay">Please log in to upload</div>
-        {% endif %}
+        <!-- Right Column -->
+        <div class="col-lg-6 hero-img">
+          <img src="{{ url_for('static', filename='hero-animal.png') }}" alt="Animal sound AI">
+        </div>
+      </div>
+    </div>
+  </section>
 
+<hr class="section-divider">
+  <!-- Features Section -->
+  <section class="features">
+    <div class="container">
+      <div class="row g-4 justify-content-center">
+        <div class="col-md-4 feature-box" data-aos="fade-up">
+          <i class="bi bi-soundwave"></i>
+          <h5>Real-time Prediction</h5>
+          <p>Get instant feedback from our model trained on 100+ species.</p>
+        </div>
+        <div class="col-md-4 feature-box" data-aos="fade-up" data-aos-delay="200">
+          <i class="bi bi-mic"></i>
+          <h5>Microphone Support</h5>
+          <p>Record live animal sounds right from your browser.</p>
+        </div>
+        <div class="col-md-4 feature-box" data-aos="fade-up" data-aos-delay="400">
+          <i class="bi bi-bar-chart-line"></i>
+          <h5>Spectrogram Analysis</h5>
+          <p>See the sound transformed into spectrograms for accuracy.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+<hr class="section-divider">
+  <!-- Upload Section -->
+  <section id="upload-section" class="container">
+    <div class="upload-card shadow position-relative" data-aos="fade-up" data-aos-delay="200">
+      {% if not current_user.is_authenticated %}
+        <div class="disabled-overlay">Please log in to upload</div>
+      {% endif %}
+      <p class="lead">Drag &amp; drop your audio file or select one</p>
+      <form id="upload-form" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+        <input type="file" class="form-control" id="file-upload" name="audio" accept=".mp3,.wav,.ogg" />
+        <div id="selected-file">No file selected</div>
+        <button type="submit" class="btn btn-success upload-btn w-100" id="upload-btn">Upload</button>
+      </form>
+      <p class="text-secondary">Supported formats: MP3, WAV, OGG (Max size: 20MB)</p>
     </div>
 
-   
-
-    <script>
-
-document.addEventListener("DOMContentLoaded", function () {
-    const fileInput = document.getElementById("file-upload");
-    const selectedFileText = document.getElementById("selected-file");
-
-    if (!fileInput || !selectedFileText) {
-        console.error("Error: file input or selected file text not found!");
-        return;
-    }
-
-    fileInput.addEventListener("change", function () {
-        console.log("File input changed!");
-        console.log("Files selected:", fileInput.files);
-
-        if (fileInput.files.length > 0) {
-            selectedFileText.textContent = "Selected file: " + fileInput.files[0].name;
-            console.log("Updated text:", selectedFileText.textContent);
-        } else {
-            selectedFileText.textContent = "No file selected";
-            console.log("No file selected");
-        }
-    });
-});
-
-        const isAuthenticated = {{ 'true' if current_user.is_authenticated else 'false' }};
-       
-
-        if (!isAuthenticated) {
-            document.getElementById('file-upload').disabled = true;
-            document.getElementById('upload-btn').classList.add('disabled');
-
-            document.getElementById('drop-area').addEventListener('click', function(event) {
-                alert("You need to log in to upload files.");
-                event.preventDefault();
-            });
-
-            document.getElementById('record-btn').addEventListener('click', function() {
-                alert("You need to log in to record audio.");
-            });
-        } else {
-            document.getElementById('record-btn').addEventListener('click', async function() {
-                if (!mediaRecorder || mediaRecorder.state === "inactive") {
-                    startRecording();
-                } else {
-                    stopRecording();
-                }
-            });
-
-            document.getElementById('file-upload').addEventListener('change', function(event) {
-    const fileInput = event.target;
-    const selectedFileText = document.getElementById('selected-file');
-
-<<<<<<< Updated upstream
-            document.getElementById('file-upload').addEventListener('change', function(event) {
-    const fileInput = event.target;
-    const fileName = fileInput.files[0]?.name || "No file selected";
-
-    // Hide the "No file selected" text and show the file name
-    const selectedFileText = document.getElementById('selected-file');
-    selectedFileText.textContent = "Selected file: " + fileName;
-
-    // If no file is selected, revert to default text
-    if (fileInput.files.length === 0) {
-        selectedFileText.textContent = "No file selected";
-    }
-});
-
-
-
-
-    </script>
-=======
-    if (fileInput.files.length > 0) {
-        selectedFileText.textContent = "Selected file: " + fileInput.files[0].name;
-    } else {
-        selectedFileText.textContent = "No file selected";
-    }
-});
- </script>
->>>>>>> Stashed changes
-
-    <div class="recording-section">
-        <button id="record-btn">Start Recording</button>
-        <p id="record-timer">Recording: 0s</p>
-        <audio id="audio-playback" controls></audio>
+    <div class="recording-section" data-aos="fade-up" data-aos-delay="200">
+      <button class="btn" id="record-btn">🎙️ Start Recording</button>
+      <p id="record-timer">Recording: 0s</p>
+      <audio id="audio-playback" controls style="display:none;"></audio>
     </div>
+
     {% if prediction_result %}
-        <h3>Prediction Result:</h3>
-        <p>{{ prediction_result }}</p>
+      <div class="alert alert-info mt-5 text-center">
+        <strong>{{ prediction_result }}</strong>
+      </div>
     {% endif %}
-    <script>
-        let mediaRecorder;
-        let audioChunks = [];
-        let recordingTimer;
-        let elapsedTime = 0;
+  </section>
 
-        document.getElementById('record-btn').addEventListener('click', async function() {
-            if (!mediaRecorder || mediaRecorder.state === "inactive") {
-                startRecording();
-            } else {
-                stopRecording();
-            }
-        });
+  <!-- Footer -->
+  <footer class="bg-dark text-white text-center">
+    <div class="container">
+      <p> Animal Sound AI © 2025</p>
+      <p>
+        <a href="https://github.com/MajdRmd/animal-sound-classification-model" class="text-white">GitHub</a> &bull; 
+        <a href="mailto:contact@example.com" class="text-white">Contact</a>
+      </p>
+    </div>
+  </footer>
 
-        async function startRecording() {
-            const recordBtn = document.getElementById('record-btn');
-            const recordTimer = document.getElementById('record-timer');
+  <!-- Bootstrap Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                audioChunks = [];
-                elapsedTime = 0;
+  
+  <script>
+    let mediaRecorder;
+    let audioChunks = [];
+    let recordingTimer;
+    let elapsedTime = 0;
 
-                mediaRecorder.ondataavailable = event => {
-                    audioChunks.push(event.data);
-                };
+    document.getElementById('record-btn').addEventListener('click', async function() {
+      if (!mediaRecorder || mediaRecorder.state === "inactive") {
+        startRecording();
+      } else {
+        stopRecording();
+      }
+    });
 
-                mediaRecorder.onstop = () => {
-    const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-    const audioUrl = URL.createObjectURL(audioBlob);
-    const audioPlayback = document.getElementById('audio-playback');
+    async function startRecording() {
+      const recordBtn = document.getElementById('record-btn');
+      const recordTimer = document.getElementById('record-timer');
 
-    // Play the recorded audio
-    audioPlayback.src = audioUrl;
-    audioPlayback.style.display = "block";
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        elapsedTime = 0;
 
-    // Create a file from the Blob and update the file input
-    const recordedFile = new File([audioBlob], "recorded_audio.wav", { type: "audio/wav" });
-    console.log(audioBlob.type); // Check the MIME type to see what format it really is.
+        mediaRecorder.ondataavailable = event => {
+          audioChunks.push(event.data);
+        };
 
+        mediaRecorder.onstop = () => {
+  recordedAudioBlob = new Blob(audioChunks, { type: "audio/wav" });
+  const audioUrl = URL.createObjectURL(recordedAudioBlob);
+  const audioPlayback = document.getElementById('audio-playback');
+  audioPlayback.src = audioUrl;
+  audioPlayback.style.display = "block";
 
-    const dataTransfer = new DataTransfer();
-    dataTransfer.items.add(recordedFile);
-    document.getElementById('file-upload').files = dataTransfer.files;
+  const dataTransfer = new DataTransfer();
+  const recordedFile = new File([recordedAudioBlob], "recorded_audio.wav", { type: "audio/wav" });
+  dataTransfer.items.add(recordedFile);
+  document.getElementById('file-upload').files = dataTransfer.files;
 
-    // Update displayed filename
-    document.getElementById('selected-file').textContent = "Selected file: recorded_audio.wav";
+  document.getElementById('selected-file').textContent = "Selected file: recorded_audio.wav";
 };
 
 
-                mediaRecorder.start();
-                recordBtn.textContent = "Stop Recording";
-                recordBtn.classList.add("recording");
-                recordTimer.textContent = "Recording: 0s";
+        mediaRecorder.start();
+        recordBtn.textContent = "Stop Recording";
+        recordBtn.classList.add("recording");
+        recordTimer.textContent = "Recording: 0s";
 
-                // Update the timer every second
-                recordingTimer = setInterval(() => {
-                    elapsedTime++;
-                    recordTimer.textContent = `Recording: ${elapsedTime}s`;
+        recordingTimer = setInterval(() => {
+          elapsedTime++;
+          recordTimer.textContent = `Recording: ${elapsedTime}s`;
 
-                    if (elapsedTime >= 20) {
-                        stopRecording();
-                    }
-                }, 1000);
+          if (elapsedTime >= 20) {
+            stopRecording();
+          }
+        }, 1000);
 
-            } catch (error) {
-                console.error("Microphone access denied:", error);
-                alert("Error accessing microphone.");
-            }
-        }
+      } catch (error) {
+        console.error("Microphone access denied:", error);
+        alert("Error accessing microphone.");
+      }
+    }
 
-        function stopRecording() {
-            mediaRecorder.stop();
-            document.getElementById('record-btn').textContent = "Start Recording";
-            document.getElementById('record-btn').classList.remove("recording");
-            clearInterval(recordingTimer);
-        }
-        
-    </script>
-    <script>
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+      }
+      const recordBtn = document.getElementById('record-btn');
+      recordBtn.textContent = "Start Recording";
+      recordBtn.classList.remove("recording");
+      clearInterval(recordingTimer);
+    }
+
+  
     document.addEventListener("DOMContentLoaded", function () {
-        console.log("JavaScript is running!");
-        const fileInput = document.getElementById("file-upload");
-        const selectedFileText = document.getElementById("selected-file");
+      const fileInput = document.getElementById("file-upload");
+      const fileLabel = document.getElementById("selected-file");
 
-        if (!fileInput || !selectedFileText) {
-            console.error("Error: file input or selected file text not found!");
-            return;
+      fileInput.addEventListener("change", () => {
+        if (fileInput.files.length > 0) {
+          fileLabel.textContent = `Selected file: ${fileInput.files[0].name}`;
+        } else {
+          fileLabel.textContent = "No file selected";
         }
-
-        fileInput.addEventListener("change", function () {
-            console.log("File input changed!");
-            console.log("Files selected:", fileInput.files);
-
-            if (fileInput.files.length > 0) {
-                selectedFileText.textContent = "Selected file: " + fileInput.files[0].name;
-                console.log("Updated text:", selectedFileText.textContent);
-            } else {
-                selectedFileText.textContent = "No file selected";
-                console.log("No file selected");
-            }
-        });
+      });
     });
+
+   
+mediaRecorder.onstop = () => {
+  recordedAudioBlob = new Blob(audioChunks, { type: "audio/wav" });
+
+};
+
+
+document.getElementById('upload-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const formData = new FormData();
+
+  if (recordedAudioBlob) {
+  
+    formData.append('audio', recordedAudioBlob, 'recorded_audio.wav');
+  } else {
+   
+    const fileInput = document.getElementById('file-upload');
+    if (fileInput.files.length === 0) {
+      alert('Please select or record an audio file first.');
+      return;
+    }
+    formData.append('audio', fileInput.files[0]);
+  }
+
+  fetch(this.action, {
+    method: 'POST',
+    body: formData,
+  })
+  .then(response => response.text())
+  .then(data => {
+   
+    
+    console.log('Upload successful:', data);
+   
+    recordedAudioBlob = null;
+    document.getElementById('file-upload').value = '';
+  })
+  .catch(err => {
+    console.error('Upload error:', err);
+  });
+});
+
+  </script>
+  <script>
+  
+  window.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('prediction_result')) {
+      const uploadSection = document.getElementById('upload-section');
+      if (uploadSection) {
+        uploadSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  });
+</script>
+
+<!-- AOS JS -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 1000,  
+    once: true       
+  });
+  let recordedAudioBlob = null;
+
+
+
 </script>
 
 </body>
