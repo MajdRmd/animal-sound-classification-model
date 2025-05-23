@@ -1,0 +1,10 @@
+alembic
+Flask
+Flask_Login
+Flask_Migrate
+flask_sqlalchemy
+librosa
+numpy
+skimage
+tensorflow
+Werkzeug
