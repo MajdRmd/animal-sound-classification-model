@@ -23,7 +23,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 # Load Trained Models
 model = load_model("GeneralModel.h5")       # general model expects (128,128,1)
 bird_model = load_model("birdmodel_vgg.h5")  # expects (96,64,1)
-monkey_model = load_model("MonkeyModel.h5") # assume (128,128,1)
+monkey_model = load_model("MonkeyModel.h5") # assume (96,64,1)
 
 CLASS_LABELS = ['cat', 'dog', 'bird', 'cow', 'lion', 'sheep', 'frog', 'chicken', 'donkey', 'monkey', 'others']
 
@@ -125,7 +125,7 @@ def upload():
             prediction_result = f"Predicted Animal: bird ({detailed_label})"
 
         elif predicted_animal == 'monkey':
-            # preprocess for monkey model (assumed 128x128)
+            # preprocess for monkey model (assumed 96x64)
             monkey_input = preprocess_audio(filepath, target_shape=(96, 64))
             if monkey_input is None:
                 flash("Error processing audio for monkey model.", "danger")
